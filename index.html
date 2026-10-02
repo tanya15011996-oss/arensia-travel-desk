@@ -1,45 +1,3953 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
+  <base target="_top">
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+
+  <meta name="theme-color" content="#d9001b">
+
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="default"
+  >
+
+  <meta
+    name="apple-mobile-web-app-title"
+    content="ARENSIA Travel Desk"
+  >
 
   <title>ARENSIA Travel Desk</title>
 
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="ARENSIA Travel Desk">
-  <meta name="theme-color" content="#ffffff">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
-  <link rel="icon" type="image/png" href="icon.png">
-  <link rel="manifest" href="manifest.json">
+  <!-- =====================================================
+       ARENSIA ICON
+       ===================================================== -->
+
+  <link
+    rel="apple-touch-icon"
+    sizes="180x180"
+    href="icon.png"
+  >
+
+  <link
+    rel="apple-touch-icon-precomposed"
+    sizes="180x180"
+    href="icon.png"
+  >
+
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="180x180"
+    href="icon.png"
+  >
+
+
+  <!-- =====================================================
+       PDF.JS
+       ===================================================== -->
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js">
+  </script>
+
 
   <style>
-    html, body {
+
+    :root {
+      --green: #123f34;
+      --bg: #f5f7f6;
+      --card: #ffffff;
+      --text: #14231e;
+      --muted: #6d7974;
+      --line: #dce4e0;
+      --warning: #fff0c2;
+      --warning-text: #654b00;
+      --ready: #177143;
+      --red: #d9001b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
       margin: 0;
       padding: 0;
+
       width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #ffffff;
+      min-width: 0;
+
+      background: var(--bg);
     }
 
-    iframe {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
+    body {
+      color: var(--text);
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+      overflow-x: hidden;
+
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
     }
+
+    body.viewer-open {
+      overflow: hidden;
+    }
+
+
+    /* =====================================================
+       APP
+       ===================================================== */
+
+    .app {
+      width: calc(100% - 60px);
+      max-width: 1580px;
+
+      margin: 0 auto;
+
+      padding: 45px 0 80px;
+    }
+
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .header {
+      display: flex;
+      align-items: center;
+
+      gap: 22px;
+
+      width: 100%;
+    }
+
+    .header-logo {
+      width: 76px;
+      height: 76px;
+
+      flex: 0 0 76px;
+
+      display: block;
+
+      object-fit: cover;
+
+      border-radius: 18px;
+    }
+
+    .header-text {
+      min-width: 0;
+      flex: 1;
+    }
+
+    h1 {
+      margin: 0;
+
+      font-size: 50px;
+      line-height: 1.05;
+
+      font-weight: 800;
+
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+
+      color: var(--muted);
+
+      font-size: 23px;
+      line-height: 1.3;
+    }
+
+
+    /* =====================================================
+       FILTERS
+       ===================================================== */
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+
+      gap: 14px;
+
+      width: 100%;
+
+      margin: 35px 0 38px;
+    }
+
+    .filter {
+      appearance: none;
+      -webkit-appearance: none;
+
+      border: 1px solid var(--line);
+
+      background: white;
+      color: var(--text);
+
+      border-radius: 999px;
+
+      padding: 15px 24px;
+
+      font-family: inherit;
+
+      font-size: 20px;
+      font-weight: 700;
+
+      cursor: pointer;
+    }
+
+    .filter.active {
+      background: var(--green);
+      color: white;
+
+      border-color: var(--green);
+    }
+
+
+    /* =====================================================
+       CARDS
+       ===================================================== */
+
+    .grid {
+      display: block;
+
+      width: 100%;
+    }
+
+    .card {
+      width: 100%;
+
+      margin: 0 0 28px;
+
+      padding: 40px 44px;
+
+      background: var(--card);
+
+      border: 1px solid var(--line);
+
+      border-radius: 24px;
+    }
+
+    .card-top {
+      display: flex;
+
+      justify-content: space-between;
+      align-items: flex-start;
+
+      gap: 25px;
+    }
+
+    .card-heading {
+      min-width: 0;
+      flex: 1;
+    }
+
+
+    /* ІМ'Я ПЕРШЕ */
+
+    .people-main {
+      font-size: 36px;
+      line-height: 1.2;
+
+      font-weight: 800;
+
+      overflow-wrap: anywhere;
+    }
+
+    .destination-sub {
+      margin-top: 10px;
+
+      font-size: 24px;
+      line-height: 1.4;
+
+      font-weight: 400;
+
+      overflow-wrap: anywhere;
+    }
+
+    .dates {
+      flex: 0 0 auto;
+
+      white-space: nowrap;
+
+      font-size: 22px;
+      line-height: 1.3;
+
+      font-weight: 800;
+    }
+
+    .purpose {
+      margin-top: 7px;
+
+      color: var(--muted);
+
+      font-size: 21px;
+      line-height: 1.4;
+    }
+
+
+    /* =====================================================
+       ROUTES
+       ===================================================== */
+
+    .route {
+      display: flex;
+      flex-direction: column;
+
+      gap: 17px;
+
+      margin-top: 30px;
+
+      padding-left: 23px;
+
+      border-left: 3px solid #dce7e2;
+    }
+
+    .route-row {
+      display: flex;
+      align-items: flex-start;
+
+      gap: 11px;
+
+      font-size: 24px;
+      line-height: 1.45;
+    }
+
+    .route-icon {
+      width: 32px;
+
+      flex: 0 0 32px;
+
+      text-align: center;
+
+      font-size: 25px;
+    }
+
+    .route-content {
+      min-width: 0;
+
+      overflow-wrap: anywhere;
+    }
+
+    .route-date {
+      font-weight: 800;
+    }
+
+    .route-number {
+      color: var(--muted);
+    }
+
+
+    /* =====================================================
+       HOTEL
+       ===================================================== */
+
+    .hotel {
+      margin-top: 24px;
+
+      font-size: 24px;
+      line-height: 1.45;
+
+      overflow-wrap: anywhere;
+    }
+
+
+    /* =====================================================
+       READY
+       ===================================================== */
+
+    .ready {
+      margin-top: 25px;
+
+      color: var(--ready);
+
+      font-size: 23px;
+      line-height: 1.4;
+
+      font-weight: 800;
+    }
+
+
+    /* =====================================================
+       WARNING
+       ===================================================== */
+
+    .warning {
+      width: 100%;
+
+      margin-top: 28px;
+
+      padding: 23px 25px;
+
+      background: var(--warning);
+      color: var(--warning-text);
+
+      border-radius: 17px;
+
+      font-size: 22px;
+      line-height: 1.5;
+
+      overflow-wrap: anywhere;
+    }
+
+    .warning-title {
+      margin-bottom: 7px;
+
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .deadline {
+      margin-top: 9px;
+
+      font-size: 19px;
+    }
+
+
+    /* =====================================================
+       BUTTONS
+       ===================================================== */
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+
+      gap: 12px;
+
+      width: 100%;
+
+      margin-top: 28px;
+    }
+
+    .btn {
+      display: inline-flex;
+
+      align-items: center;
+      justify-content: center;
+
+      min-height: 58px;
+
+      padding: 14px 20px;
+
+      background: white;
+      color: var(--text);
+
+      border: 1px solid var(--line);
+
+      border-radius: 13px;
+
+      text-decoration: none;
+
+      font-family: inherit;
+
+      font-size: 20px;
+      line-height: 1.2;
+
+      font-weight: 700;
+
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: #f7f9f8;
+    }
+
+
+    /* =====================================================
+       STATES
+       ===================================================== */
+
+    .loading,
+    .empty,
+    .error {
+      width: 100%;
+
+      padding: 50px 25px;
+
+      background: white;
+
+      border: 1px solid var(--line);
+
+      border-radius: 22px;
+
+      text-align: center;
+
+      font-size: 20px;
+    }
+
+    .error {
+      color: #a52a2a;
+    }
+
+
+    /* =====================================================
+       DOCUMENT VIEWER
+       ===================================================== */
+
+    .viewer {
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 9999;
+
+      display: none;
+
+      flex-direction: column;
+
+      background: #eef1ef;
+    }
+
+    .viewer.open {
+      display: flex;
+    }
+
+    .viewer-header {
+      flex: 0 0 auto;
+
+      display: flex;
+      align-items: center;
+
+      gap: 15px;
+
+      min-height: 76px;
+
+      padding:
+        calc(12px + env(safe-area-inset-top))
+        20px
+        12px;
+
+      background: white;
+
+      border-bottom: 1px solid var(--line);
+    }
+
+    .viewer-back {
+      appearance: none;
+      -webkit-appearance: none;
+
+      flex: 0 0 auto;
+
+      border: 0;
+
+      background: transparent;
+      color: var(--text);
+
+      padding: 10px;
+
+      font-family: inherit;
+
+      font-size: 20px;
+      font-weight: 800;
+
+      cursor: pointer;
+    }
+
+    .viewer-title-wrap {
+      min-width: 0;
+
+      flex: 1;
+    }
+
+    .viewer-title {
+      font-size: 20px;
+      line-height: 1.2;
+
+      font-weight: 800;
+
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .viewer-counter {
+      margin-top: 3px;
+
+      color: var(--muted);
+
+      font-size: 14px;
+    }
+
+    .viewer-navigation {
+      flex: 0 0 auto;
+
+      display: flex;
+
+      gap: 7px;
+    }
+
+    .viewer-nav-btn {
+      appearance: none;
+      -webkit-appearance: none;
+
+      width: 42px;
+      height: 42px;
+
+      border: 1px solid var(--line);
+
+      background: white;
+      color: var(--text);
+
+      border-radius: 10px;
+
+      font-size: 19px;
+
+      cursor: pointer;
+    }
+
+    .viewer-nav-btn:disabled {
+      opacity: .3;
+
+      cursor: default;
+    }
+
+
+    /* =====================================================
+       VIEWER BODY
+       ===================================================== */
+
+    .viewer-body {
+      position: relative;
+
+      flex: 1;
+
+      min-height: 0;
+
+      overflow: auto;
+
+      background: #dfe4e1;
+
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .viewer-loading {
+      position: absolute;
+
+      inset: 0;
+
+      z-index: 10;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      padding: 30px;
+
+      background: #f5f7f6;
+
+      text-align: center;
+
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .viewer-error {
+      position: absolute;
+
+      inset: 0;
+
+      z-index: 11;
+
+      display: none;
+
+      align-items: center;
+      justify-content: center;
+
+      padding: 35px;
+
+      background: #f5f7f6;
+      color: #a52a2a;
+
+      text-align: center;
+
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+
+    /* =====================================================
+       PDF
+       ===================================================== */
+
+    .pdf-area {
+      display: none;
+
+      width: 100%;
+      min-height: 100%;
+
+      padding: 25px 20px 90px;
+
+      text-align: center;
+    }
+
+    .pdf-page-wrapper {
+      display: inline-block;
+
+      max-width: 100%;
+
+      background: white;
+
+      box-shadow:
+        0 4px 18px
+        rgba(0, 0, 0, .13);
+    }
+
+    #pdfCanvas {
+      display: block;
+
+      max-width: 100%;
+
+      height: auto;
+    }
+
+    .pdf-controls {
+      position: fixed;
+
+      left: 50%;
+
+      bottom:
+        calc(
+          18px +
+          env(safe-area-inset-bottom)
+        );
+
+      z-index: 10001;
+
+      display: none;
+
+      align-items: center;
+
+      gap: 12px;
+
+      transform: translateX(-50%);
+
+      padding: 8px 10px;
+
+      background: rgba(255,255,255,.96);
+
+      border: 1px solid var(--line);
+
+      border-radius: 14px;
+
+      box-shadow:
+        0 4px 18px
+        rgba(0,0,0,.12);
+    }
+
+    .pdf-control-btn {
+      appearance: none;
+      -webkit-appearance: none;
+
+      width: 42px;
+      height: 42px;
+
+      border: 1px solid var(--line);
+
+      background: white;
+
+      border-radius: 10px;
+
+      color: var(--text);
+
+      font-size: 20px;
+      font-weight: 700;
+
+      cursor: pointer;
+    }
+
+    .pdf-control-btn:disabled {
+      opacity: .3;
+
+      cursor: default;
+    }
+
+    .pdf-page-info {
+      min-width: 82px;
+
+      color: var(--text);
+
+      text-align: center;
+
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+
+    /* =====================================================
+       IMAGE
+       ===================================================== */
+
+    .image-area {
+      display: none;
+
+      width: 100%;
+      min-height: 100%;
+
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+    }
+
+    .viewer-image {
+      display: block;
+
+      max-width: 100%;
+      max-height: calc(100vh - 120px);
+
+      object-fit: contain;
+
+      background: white;
+
+      box-shadow:
+        0 4px 18px
+        rgba(0,0,0,.13);
+    }
+
+
+    /* =====================================================
+       UNSUPPORTED
+       ===================================================== */
+
+    .unsupported-area {
+      display: none;
+
+      min-height: 100%;
+
+      align-items: center;
+      justify-content: center;
+
+      padding: 35px;
+    }
+
+    .unsupported-box {
+      max-width: 500px;
+
+      padding: 30px;
+
+      background: white;
+
+      border-radius: 18px;
+
+      text-align: center;
+
+      font-size: 17px;
+      line-height: 1.5;
+    }
+
+
+    /* =====================================================
+       MOBILE
+       ===================================================== */
+
+    @media screen and (max-width: 700px) {
+
+      html,
+      body {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        overflow-x: hidden !important;
+      }
+
+      .app {
+        width: 100% !important;
+        max-width: none !important;
+
+        margin: 0 !important;
+
+        padding:
+          24px
+          16px
+          calc(45px + env(safe-area-inset-bottom))
+          16px !important;
+      }
+
+      .header {
+        gap: 12px;
+      }
+
+      .header-logo {
+        width: 50px;
+        height: 50px;
+
+        flex: 0 0 50px;
+
+        border-radius: 12px;
+      }
+
+      h1 {
+        font-size: 28px;
+        line-height: 1.08;
+
+        letter-spacing: -.5px;
+      }
+
+      .subtitle {
+        margin-top: 5px;
+
+        font-size: 15px;
+      }
+
+      .filters {
+        flex-wrap: nowrap;
+
+        gap: 8px;
+
+        margin: 22px 0 24px;
+
+        overflow-x: auto;
+
+        -webkit-overflow-scrolling: touch;
+
+        scrollbar-width: none;
+      }
+
+      .filters::-webkit-scrollbar {
+        display: none;
+      }
+
+      .filter {
+        flex: 0 0 auto;
+
+        padding: 10px 15px;
+
+        font-size: 14px;
+      }
+
+      .card {
+        margin: 0 0 17px;
+
+        padding: 23px 20px;
+
+        border-radius: 18px;
+      }
+
+      .card-top {
+        gap: 10px;
+      }
+
+      .people-main {
+        font-size: 23px;
+        line-height: 1.2;
+      }
+
+      .destination-sub {
+        margin-top: 7px;
+
+        font-size: 16px;
+      }
+
+      .dates {
+        font-size: 14px;
+      }
+
+      .purpose {
+        font-size: 15px;
+      }
+
+      .route {
+        gap: 11px;
+
+        margin-top: 20px;
+
+        padding-left: 14px;
+
+        border-left-width: 2px;
+      }
+
+      .route-row {
+        gap: 8px;
+
+        font-size: 16px;
+      }
+
+      .route-icon {
+        width: 22px;
+
+        flex: 0 0 22px;
+
+        font-size: 17px;
+      }
+
+      .hotel {
+        margin-top: 18px;
+
+        font-size: 16px;
+      }
+
+      .ready {
+        margin-top: 18px;
+
+        font-size: 16px;
+      }
+
+      .warning {
+        margin-top: 19px;
+
+        padding: 14px 15px;
+
+        border-radius: 13px;
+
+        font-size: 15px;
+      }
+
+      .warning-title {
+        font-size: 15px;
+      }
+
+      .deadline {
+        margin-top: 8px;
+
+        font-size: 14px;
+      }
+
+      .buttons {
+        gap: 8px;
+
+        margin-top: 18px;
+      }
+
+      .btn {
+        min-height: 45px;
+
+        padding: 10px 13px;
+
+        border-radius: 11px;
+
+        font-size: 15px;
+      }
+
+      .viewer-header {
+        gap: 7px;
+
+        min-height: 64px;
+
+        padding:
+          calc(7px + env(safe-area-inset-top))
+          8px
+          7px;
+      }
+
+      .viewer-back {
+        padding: 8px 5px;
+
+        font-size: 16px;
+      }
+
+      .viewer-title {
+        font-size: 16px;
+      }
+
+      .viewer-counter {
+        font-size: 12px;
+      }
+
+      .viewer-navigation {
+        gap: 4px;
+      }
+
+      .viewer-nav-btn {
+        width: 36px;
+        height: 36px;
+
+        font-size: 16px;
+      }
+
+      .pdf-area {
+        padding: 12px 8px 85px;
+      }
+
+      .pdf-page-wrapper {
+        width: 100%;
+      }
+
+      #pdfCanvas {
+        width: 100%;
+
+        height: auto;
+      }
+
+      .pdf-controls {
+        bottom:
+          calc(
+            10px +
+            env(safe-area-inset-bottom)
+          );
+      }
+
+      .pdf-control-btn {
+        width: 38px;
+        height: 38px;
+      }
+
+      .image-area {
+        padding: 10px;
+      }
+    }
+
+
+    @media screen and (max-width: 390px) {
+
+      .app {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+
+      .header-logo {
+        width: 46px;
+        height: 46px;
+
+        flex-basis: 46px;
+      }
+
+      .subtitle {
+        font-size: 14px;
+      }
+
+      .card {
+        padding: 20px 17px;
+      }
+
+      .people-main {
+        font-size: 21px;
+      }
+
+      .destination-sub,
+      .route-row {
+        font-size: 15px;
+      }
+    }
+
   </style>
+  <link rel="manifest" href="manifest.json">
 </head>
 
+
 <body>
-  <iframe
-    src="https://script.google.com/macros/s/AKfycbytEs2tay3UuD5LpADN6VOIgbXVX26l8jnz--CB0nIL4q7c6DsYZBJh45CCOXVByMXQ4w/exec"
-    allow="fullscreen">
-  </iframe>
+
+<div class="app">
+
+  <header class="header">
+
+    <img
+      class="header-logo"
+      src="data:image/jpeg;base64,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"
+      alt="ARENSIA"
+    >
+
+    <div class="header-text">
+
+      <h1>ARENSIA Travel Desk</h1>
+
+      <div class="subtitle">
+        Відрядження · маршрути · задачі · документи
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <div class="filters">
+
+    <button
+      class="filter active"
+      data-filter="all"
+    >
+      Усі
+    </button>
+
+    <button
+      class="filter"
+      data-filter="attention"
+    >
+      🔥 Потребують уваги
+    </button>
+
+    <button
+      class="filter"
+      data-filter="ready"
+    >
+      ✓ Готові
+    </button>
+
+  </div>
+
+
+  <main
+    id="grid"
+    class="grid"
+  >
+
+    <div class="loading">
+      Завантажую відрядження…
+    </div>
+
+  </main>
+
+</div>
+
+
+
+<!-- =====================================================
+     DOCUMENT VIEWER
+     ===================================================== -->
+
+<div
+  id="viewer"
+  class="viewer"
+>
+
+  <div class="viewer-header">
+
+    <button
+      class="viewer-back"
+      onclick="closeViewer()"
+    >
+      ← Назад
+    </button>
+
+
+    <div class="viewer-title-wrap">
+
+      <div
+        id="viewerTitle"
+        class="viewer-title"
+      >
+        Документ
+      </div>
+
+      <div
+        id="viewerCounter"
+        class="viewer-counter"
+      ></div>
+
+    </div>
+
+
+    <div
+      id="viewerNavigation"
+      class="viewer-navigation"
+    >
+
+      <button
+        id="viewerPrev"
+        class="viewer-nav-btn"
+        onclick="previousViewerFile()"
+      >
+        ‹
+      </button>
+
+      <button
+        id="viewerNext"
+        class="viewer-nav-btn"
+        onclick="nextViewerFile()"
+      >
+        ›
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div
+    id="viewerBody"
+    class="viewer-body"
+  >
+
+    <div
+      id="viewerLoading"
+      class="viewer-loading"
+    >
+      Завантажую документ…
+    </div>
+
+
+    <div
+      id="viewerError"
+      class="viewer-error"
+    ></div>
+
+
+    <div
+      id="pdfArea"
+      class="pdf-area"
+    >
+
+      <div class="pdf-page-wrapper">
+
+        <canvas id="pdfCanvas"></canvas>
+
+      </div>
+
+    </div>
+
+
+    <div
+      id="imageArea"
+      class="image-area"
+    >
+
+      <img
+        id="viewerImage"
+        class="viewer-image"
+        alt="Документ"
+      >
+
+    </div>
+
+
+    <div
+      id="unsupportedArea"
+      class="unsupported-area"
+    >
+
+      <div
+        id="unsupportedBox"
+        class="unsupported-box"
+      >
+        Цей формат не можна показати у вбудованому переглядачі.
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div
+    id="pdfControls"
+    class="pdf-controls"
+  >
+
+    <button
+      id="pdfPrev"
+      class="pdf-control-btn"
+      onclick="previousPdfPage()"
+    >
+      ‹
+    </button>
+
+    <div
+      id="pdfPageInfo"
+      class="pdf-page-info"
+    >
+      1 / 1
+    </div>
+
+    <button
+      id="pdfNext"
+      class="pdf-control-btn"
+      onclick="nextPdfPage()"
+    >
+      ›
+    </button>
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+
+/* =====================================================
+   PDF.JS
+   ===================================================== */
+
+if (typeof pdfjsLib !== 'undefined') {
+
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+
+
+
+/* =====================================================
+   GITHUB API
+   ===================================================== */
+
+const API_URL =
+  'https://script.google.com/macros/s/AKfycbytEs2tay3UuD5LpADN6VOIgbXVX26l8jnz--CB0nIL4q7c6DsYZBJh45CCOXVByMXQ4w/exec';
+
+function jsonp(params) {
+  return new Promise(function(resolve, reject) {
+    const callbackName = '__arensia_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    const script = document.createElement('script');
+    const query = new URLSearchParams(params || {});
+    query.set('callback', callbackName);
+
+    function cleanup() {
+      try { delete window[callbackName]; } catch (e) { window[callbackName] = undefined; }
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[callbackName] = function(payload) {
+      cleanup();
+      if (payload && payload.ok === false) {
+        reject(new Error(payload.error || 'Помилка API'));
+        return;
+      }
+      resolve(payload && Object.prototype.hasOwnProperty.call(payload, 'data') ? payload.data : payload);
+    };
+
+    script.onerror = function() {
+      cleanup();
+      reject(new Error('Не вдалося підключитися до Apps Script API.'));
+    };
+
+    script.src = API_URL + '?' + query.toString();
+    document.head.appendChild(script);
+  });
+}
+
+/* =====================================================
+   STATE
+   ===================================================== */
+
+let trips = [];
+
+let currentFilter = 'all';
+
+let viewerFiles = [];
+
+let viewerIndex = 0;
+
+let pdfDocument = null;
+
+let pdfPageNumber = 1;
+
+let pdfRendering = false;
+
+let pdfPendingPage = null;
+
+let pdfRenderToken = 0;
+
+
+
+/* =====================================================
+   LOAD MASTER
+   ===================================================== */
+
+jsonp({ api: 'data' })
+  .then(function(data) {
+    trips = buildTrips(data.trips || [], data.routes || []);
+    sortTrips();
+    render();
+  })
+  .catch(function(error) {
+    document.getElementById('grid').innerHTML =
+      '<div class="error">' +
+      'Не вдалося завантажити MASTER.<br>' +
+      escapeHtml(error.message || String(error)) +
+      '</div>';
+  });
+
+
+
+/* =====================================================
+   HELPERS
+   ===================================================== */
+
+function txt(value) {
+
+  return String(
+    value || ''
+  ).trim();
+}
+
+
+function upper(value) {
+
+  return txt(value)
+    .toUpperCase();
+}
+
+
+function unique(values) {
+
+  return [
+    ...new Set(
+      values
+        .map(txt)
+        .filter(Boolean)
+    )
+  ];
+}
+
+
+function validUrl(value) {
+
+  return /^https?:\/\//i
+    .test(
+      txt(value)
+    );
+}
+
+
+function isStatus(value) {
+
+  return [
+    'ГОТОВО',
+    'ТРЕБА ЗРОБИТИ',
+    'ТЕРМІНОВО',
+    'ОЧІКУЄМО',
+    'НЕ ПОТРІБНО',
+    'НЕВІДОМО'
+  ].includes(
+    upper(value)
+  );
+}
+
+
+function clean(value) {
+
+  const v = txt(value);
+
+  if (
+    !v ||
+    isStatus(v)
+  ) {
+    return '';
+  }
+
+  return v;
+}
+
+
+
+/* =====================================================
+   EMPLOYEE NAME
+   ІМ'Я → ПРІЗВИЩЕ
+   ===================================================== */
+
+function normalizeEmployeeName(value) {
+
+  const name =
+    txt(value)
+      .replace(/\s+/g, ' ');
+
+
+  if (!name) {
+    return '';
+  }
+
+
+  const parts =
+    name.split(' ');
+
+
+  if (
+    parts.length !== 2
+  ) {
+    return name;
+  }
+
+
+  const knownFirstNames =
+    new Set([
+
+      'Євген',
+      'Юлія',
+      'Тетяна',
+      'Зореслава',
+      'Юрій',
+      'Мирослава',
+      'Дарина',
+      'Катерина',
+
+      'Евген',
+      'Евгений',
+      'Юлия',
+      'Татьяна',
+      'Юрий',
+      'Екатерина'
+
+    ]);
+
+
+  if (
+    knownFirstNames.has(
+      parts[0]
+    )
+  ) {
+
+    return (
+      parts[0] +
+      ' ' +
+      parts[1]
+    );
+  }
+
+
+  if (
+    knownFirstNames.has(
+      parts[1]
+    )
+  ) {
+
+    return (
+      parts[1] +
+      ' ' +
+      parts[0]
+    );
+  }
+
+
+  return name;
+}
+
+
+
+/* =====================================================
+   BUILD TRIPS
+   ===================================================== */
+
+function buildTrips(
+  tripRows,
+  routeRows
+) {
+
+  const groups = {};
+
+
+  tripRows.forEach(
+    function(row, index) {
+
+      const tripId =
+        txt(row.tripId) ||
+        'NO-ID-' + index;
+
+
+      if (!groups[tripId]) {
+
+        groups[tripId] = [];
+      }
+
+
+      groups[tripId]
+        .push(row);
+    }
+  );
+
+
+  return Object.keys(groups)
+    .map(
+      function(tripId) {
+
+        const rows =
+          groups[tripId];
+
+
+        const routes =
+          routeRows.filter(
+            function(route) {
+
+              return (
+                txt(route.tripId) ===
+                tripId
+              );
+            }
+          );
+
+
+        return createTrip(
+          tripId,
+          rows,
+          routes
+        );
+      }
+    );
+}
+
+
+
+function createTrip(
+  tripId,
+  rows,
+  routes
+) {
+
+  const startDates =
+    rows
+      .map(
+        row =>
+          parseDate(
+            row.startDate
+          )
+      )
+      .filter(Boolean);
+
+
+  const endDates =
+    rows
+      .map(
+        row =>
+          parseDate(
+            row.endDate
+          ) ||
+          parseDate(
+            row.startDate
+          )
+      )
+      .filter(Boolean);
+
+
+  const start =
+    startDates.length
+
+      ? new Date(
+          Math.min(
+            ...startDates.map(
+              d => d.getTime()
+            )
+          )
+        )
+
+      : null;
+
+
+  const end =
+    endDates.length
+
+      ? new Date(
+          Math.max(
+            ...endDates.map(
+              d => d.getTime()
+            )
+          )
+        )
+
+      : start;
+
+
+  return {
+
+    tripId: tripId,
+
+    rows: rows,
+
+    start: start,
+
+    end: end,
+
+
+    employees:
+      unique(
+        rows.map(
+          row =>
+            normalizeEmployeeName(
+              row.employee
+            )
+        )
+      ),
+
+
+    destinations:
+      unique(
+        rows.map(
+          row =>
+            clean(
+              row.destination
+            )
+        )
+      ),
+
+
+    purposes:
+      unique(
+        rows.map(
+          row =>
+            clean(
+              row.purpose
+            )
+        )
+      ),
+
+
+    hotels:
+      unique(
+        rows.map(
+          row =>
+            clean(
+              row.hotel
+            )
+        )
+      ),
+
+
+    tasks:
+      unique(
+        rows.map(
+          row =>
+            clean(
+              row.task
+            )
+        )
+      ),
+
+
+    deadlines:
+      unique(
+        rows.map(
+          row =>
+            clean(
+              row.deadline
+            )
+        )
+      ),
+
+
+    routes:
+      prepareRoutes(
+        routes
+      ),
+
+
+    folders:
+      unique(
+        rows
+          .map(
+            row =>
+              row.driveFolder
+          )
+          .filter(
+            validUrl
+          )
+      ),
+
+
+    ticketFiles:
+      unique(
+        rows
+          .map(
+            row =>
+              row.ticketOutFile
+          )
+          .concat(
+            rows.map(
+              row =>
+                row.ticketBackFile
+            )
+          )
+          .filter(
+            validUrl
+          )
+      ),
+
+
+    hotelFiles:
+      unique(
+        rows
+          .map(
+            row =>
+              row.hotelFile
+          )
+          .filter(
+            validUrl
+          )
+      ),
+
+
+    transferFiles:
+      unique(
+        rows
+          .map(
+            row =>
+              row.transferFile
+          )
+          .filter(
+            validUrl
+          )
+      ),
+
+
+    tripFiles:
+      unique(
+        rows
+          .map(
+            row =>
+              row.tripFile
+          )
+          .filter(
+            validUrl
+          )
+      )
+
+  };
+}
+
+
+
+/* =====================================================
+   ROUTES
+   ===================================================== */
+
+function prepareRoutes(routes) {
+
+  return routes
+
+    .map(
+      route => ({
+        ...route,
+
+        parsedDate:
+          parseDate(
+            route.date
+          )
+      })
+    )
+
+    .sort(
+      function(a, b) {
+
+        const dateA =
+          a.parsedDate
+            ? a.parsedDate.getTime()
+            : Infinity;
+
+
+        const dateB =
+          b.parsedDate
+            ? b.parsedDate.getTime()
+            : Infinity;
+
+
+        if (
+          dateA !== dateB
+        ) {
+
+          return dateA - dateB;
+        }
+
+
+        return (
+          timeToMinutes(
+            a.departure
+          ) -
+
+          timeToMinutes(
+            b.departure
+          )
+        );
+      }
+    );
+}
+
+
+
+function timeToMinutes(value) {
+
+  const match =
+    txt(value)
+      .match(
+        /^(\d{1,2}):(\d{2})$/
+      );
+
+
+  if (!match) {
+
+    return 9999;
+  }
+
+
+  return (
+    Number(match[1]) * 60 +
+    Number(match[2])
+  );
+}
+
+
+
+function routeIcon(type) {
+
+  switch (
+    upper(type)
+  ) {
+
+    case 'FLIGHT':
+      return '✈️';
+
+    case 'TRAIN':
+      return '🚆';
+
+    case 'TRANSFER':
+      return '🚘';
+
+    case 'BUS':
+      return '🚌';
+
+    default:
+      return '📍';
+  }
+}
+
+
+
+/* =====================================================
+   STATUS
+   ===================================================== */
+
+function needsAttention(trip) {
+
+  if (
+    trip.tasks.length
+  ) {
+
+    return true;
+  }
+
+
+  return trip.rows.some(
+    function(row) {
+
+      const status =
+        upper(
+          row.status
+        );
+
+
+      return (
+        status === 'ТРЕБА ЗРОБИТИ' ||
+        status === 'ТЕРМІНОВО' ||
+        status === 'ОЧІКУЄМО'
+      );
+    }
+  );
+}
+
+
+
+function isReady(trip) {
+
+  if (
+    needsAttention(trip)
+  ) {
+
+    return false;
+  }
+
+
+  const statuses =
+    trip.rows
+      .map(
+        row =>
+          upper(
+            row.status
+          )
+      )
+      .filter(Boolean);
+
+
+  if (
+    !statuses.length
+  ) {
+
+    return false;
+  }
+
+
+  return statuses.every(
+    function(status) {
+
+      return (
+        status === 'ГОТОВО' ||
+        status === 'НЕ ПОТРІБНО'
+      );
+    }
+  );
+}
+
+
+
+/* =====================================================
+   SORT
+   ===================================================== */
+
+function sortTrips() {
+
+  trips.sort(
+    function(a, b) {
+
+      const aDate =
+        a.start
+          ? a.start.getTime()
+          : Infinity;
+
+
+      const bDate =
+        b.start
+          ? b.start.getTime()
+          : Infinity;
+
+
+      return aDate - bDate;
+    }
+  );
+}
+
+
+
+/* =====================================================
+   RENDER
+   ===================================================== */
+
+function render() {
+
+  let visible =
+    trips;
+
+
+  if (
+    currentFilter ===
+    'attention'
+  ) {
+
+    visible =
+      trips.filter(
+        needsAttention
+      );
+  }
+
+
+  if (
+    currentFilter ===
+    'ready'
+  ) {
+
+    visible =
+      trips.filter(
+        isReady
+      );
+  }
+
+
+  const grid =
+    document
+      .getElementById(
+        'grid'
+      );
+
+
+  if (
+    !visible.length
+  ) {
+
+    grid.innerHTML =
+      '<div class="empty">' +
+      'У цьому розділі немає відряджень.' +
+      '</div>';
+
+    return;
+  }
+
+
+  grid.innerHTML =
+    visible
+      .map(
+        renderCard
+      )
+      .join('');
+}
+
+
+
+/* =====================================================
+   CARD
+   ===================================================== */
+
+function renderCard(trip) {
+
+  const destination =
+    trip.destinations.length
+
+      ? trip.destinations.join(' → ')
+
+      : 'Напрямок не вказаний';
+
+
+  const people =
+    trip.employees.length
+
+      ? trip.employees.join(' · ')
+
+      : 'Співробітник не вказаний';
+
+
+  return `
+
+    <article class="card">
+
+      <div class="card-top">
+
+        <div class="card-heading">
+
+          <div class="people-main">
+            ${escapeHtml(people)}
+          </div>
+
+
+          <div class="destination-sub">
+            ${escapeHtml(destination)}
+          </div>
+
+
+          ${
+            trip.purposes.length
+
+              ? `
+                <div class="purpose">
+
+                  ${
+                    escapeHtml(
+                      trip.purposes.join(' · ')
+                    )
+                  }
+
+                </div>
+              `
+
+              : ''
+          }
+
+        </div>
+
+
+        <div class="dates">
+
+          ${
+            escapeHtml(
+              formatRange(
+                trip.start,
+                trip.end
+              )
+            )
+          }
+
+        </div>
+
+      </div>
+
+
+      ${renderRoutes(trip)}
+
+      ${renderHotel(trip)}
+
+
+      ${
+        isReady(trip)
+
+          ? `
+            <div class="ready">
+              ✓ Відрядження підготовлено
+            </div>
+          `
+
+          : ''
+      }
+
+
+      ${renderTasks(trip)}
+
+      ${renderButtons(trip)}
+
+    </article>
+  `;
+}
+
+
+
+/* =====================================================
+   ROUTES DISPLAY
+   ===================================================== */
+
+function renderRoutes(trip) {
+
+  if (
+    !trip.routes.length
+  ) {
+
+    return '';
+  }
+
+
+  return `
+
+    <div class="route">
+
+      ${
+        trip.routes
+          .map(
+            function(route) {
+
+              const date =
+                route.parsedDate
+
+                  ? shortDate(
+                      route.parsedDate
+                    )
+
+                  : '';
+
+
+              let time = '';
+
+
+              if (
+                txt(
+                  route.departure
+                )
+              ) {
+
+                time +=
+                  txt(
+                    route.departure
+                  );
+              }
+
+
+              if (
+                txt(
+                  route.arrival
+                )
+              ) {
+
+                time +=
+                  '–' +
+                  txt(
+                    route.arrival
+                  );
+              }
+
+
+              let places = '';
+
+
+              if (
+                txt(route.from) &&
+                txt(route.to)
+              ) {
+
+                places =
+                  txt(route.from) +
+                  ' → ' +
+                  txt(route.to);
+
+              } else {
+
+                places =
+                  txt(route.from) ||
+                  txt(route.to);
+              }
+
+
+              return `
+
+                <div class="route-row">
+
+                  <div class="route-icon">
+
+                    ${
+                      routeIcon(
+                        route.type
+                      )
+                    }
+
+                  </div>
+
+
+                  <div class="route-content">
+
+                    ${
+                      date
+
+                        ? `
+                          <span class="route-date">
+                            ${escapeHtml(date)}
+                          </span>
+                          ·
+                        `
+
+                        : ''
+                    }
+
+
+                    ${
+                      time
+
+                        ? escapeHtml(time) +
+                          ' · '
+
+                        : ''
+                    }
+
+
+                    ${escapeHtml(places)}
+
+
+                    ${
+                      txt(route.number)
+
+                        ? `
+                          <span class="route-number">
+
+                            · ${
+                              escapeHtml(
+                                route.number
+                              )
+                            }
+
+                          </span>
+                        `
+
+                        : ''
+                    }
+
+                  </div>
+
+                </div>
+              `;
+            }
+          )
+          .join('')
+      }
+
+    </div>
+  `;
+}
+
+
+
+/* =====================================================
+   HOTEL
+   ===================================================== */
+
+function renderHotel(trip) {
+
+  if (
+    !trip.hotels.length
+  ) {
+
+    return '';
+  }
+
+
+  return `
+
+    <div class="hotel">
+
+      ${
+        trip.hotels
+          .map(
+            hotel =>
+              '🏨 ' +
+              escapeHtml(hotel)
+          )
+          .join('<br>')
+      }
+
+    </div>
+  `;
+}
+
+
+
+/* =====================================================
+   TASKS
+   ===================================================== */
+
+function renderTasks(trip) {
+
+  if (
+    !trip.tasks.length
+  ) {
+
+    return '';
+  }
+
+
+  let html = `
+
+    <div class="warning">
+
+      <div class="warning-title">
+        ⚠️ Треба зробити:
+      </div>
+
+      ${
+        trip.tasks
+          .map(
+            escapeHtml
+          )
+          .join('<br>')
+      }
+  `;
+
+
+  if (
+    trip.deadlines.length
+  ) {
+
+    html += `
+
+      <div class="deadline">
+
+        Дедлайн:
+
+        ${
+          trip.deadlines
+            .map(
+              escapeHtml
+            )
+            .join(' · ')
+        }
+
+      </div>
+    `;
+  }
+
+
+  html +=
+    '</div>';
+
+
+  return html;
+}
+
+
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+
+function renderButtons(trip) {
+
+  let html = '';
+
+
+  if (
+    trip.folders.length
+  ) {
+
+    html += `
+
+      <a
+        class="btn"
+        href="${
+          escapeHtml(
+            trip.folders[0]
+          )
+        }"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        📁 Всі файли
+      </a>
+    `;
+  }
+
+
+  if (
+    trip.ticketFiles.length
+  ) {
+
+    html +=
+      viewerButton(
+        trip.ticketFiles,
+        '🎫 Квитки'
+      );
+  }
+
+
+  if (
+    trip.hotelFiles.length
+  ) {
+
+    html +=
+      viewerButton(
+        trip.hotelFiles,
+        '🏨 Готель'
+      );
+  }
+
+
+  if (
+    trip.transferFiles.length
+  ) {
+
+    html +=
+      viewerButton(
+        trip.transferFiles,
+        '🚘 Трансфер'
+      );
+  }
+
+
+  if (
+    trip.tripFiles.length
+  ) {
+
+    html +=
+      viewerButton(
+        trip.tripFiles,
+        '📄 Документи'
+      );
+  }
+
+
+  if (
+    !html
+  ) {
+
+    return '';
+  }
+
+
+  return `
+
+    <div class="buttons">
+
+      ${html}
+
+    </div>
+  `;
+}
+
+
+
+function viewerButton(
+  files,
+  label
+) {
+
+  const encoded =
+    encodeURIComponent(
+      JSON.stringify(
+        files
+      )
+    );
+
+
+  return `
+
+    <button
+      type="button"
+      class="btn"
+      data-files="${escapeHtml(encoded)}"
+      data-title="${escapeHtml(label)}"
+      onclick="openViewerFromButton(this)"
+    >
+      ${escapeHtml(label)}
+    </button>
+  `;
+}
+
+
+
+/* =====================================================
+   OPEN VIEWER
+   ===================================================== */
+
+function openViewerFromButton(button) {
+
+  try {
+
+    viewerFiles =
+      JSON.parse(
+        decodeURIComponent(
+          button.dataset.files
+        )
+      );
+
+  } catch (error) {
+
+    viewerFiles = [];
+  }
+
+
+  if (
+    !viewerFiles.length
+  ) {
+
+    return;
+  }
+
+
+  viewerIndex = 0;
+
+
+  document
+    .getElementById(
+      'viewer'
+    )
+    .classList
+    .add(
+      'open'
+    );
+
+
+  document
+    .body
+    .classList
+    .add(
+      'viewer-open'
+    );
+
+
+  loadViewerFile();
+}
+
+
+
+/* =====================================================
+   LOAD DOCUMENT
+   ===================================================== */
+
+function loadViewerFile() {
+
+  if (
+    !viewerFiles.length
+  ) {
+
+    return;
+  }
+
+
+  resetViewerContent();
+
+
+  const url =
+    viewerFiles[
+      viewerIndex
+    ];
+
+
+  updateViewerNavigation();
+
+
+  jsonp({ api: 'file', url: url })
+    .then(function(file) {
+      document.getElementById('viewerTitle').textContent = file.name || 'Документ';
+      const mimeType = String(file.mimeType || '').toLowerCase();
+
+      try {
+        if (mimeType === 'application/pdf' || String(file.name || '').toLowerCase().endsWith('.pdf')) {
+          showPdf(file.base64);
+          return;
+        }
+
+        if (mimeType.startsWith('image/')) {
+          showImage(file.base64, mimeType);
+          return;
+        }
+
+        showUnsupported(file.name);
+      } catch (error) {
+        showViewerError(error.message || String(error));
+      }
+    })
+    .catch(function(error) {
+      showViewerError(error.message || String(error));
+    });
+}
+
+
+
+/* =====================================================
+   RESET VIEWER
+   ===================================================== */
+
+function resetViewerContent() {
+
+  pdfRenderToken++;
+
+
+  pdfDocument = null;
+
+  pdfPageNumber = 1;
+
+  pdfRendering = false;
+
+  pdfPendingPage = null;
+
+
+  document
+    .getElementById(
+      'viewerLoading'
+    )
+    .style.display =
+      'flex';
+
+
+  const errorBox =
+    document
+      .getElementById(
+        'viewerError'
+      );
+
+
+  errorBox.style.display =
+    'none';
+
+
+  errorBox.textContent =
+    '';
+
+
+  document
+    .getElementById(
+      'pdfArea'
+    )
+    .style.display =
+      'none';
+
+
+  document
+    .getElementById(
+      'pdfControls'
+    )
+    .style.display =
+      'none';
+
+
+  document
+    .getElementById(
+      'imageArea'
+    )
+    .style.display =
+      'none';
+
+
+  const image =
+    document
+      .getElementById(
+        'viewerImage'
+      );
+
+
+  image.removeAttribute(
+    'src'
+  );
+
+
+  document
+    .getElementById(
+      'unsupportedArea'
+    )
+    .style.display =
+      'none';
+
+
+  const canvas =
+    document
+      .getElementById(
+        'pdfCanvas'
+      );
+
+
+  const context =
+    canvas.getContext(
+      '2d'
+    );
+
+
+  context.clearRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+
+  canvas.width = 1;
+
+  canvas.height = 1;
+}
+
+
+
+/* =====================================================
+   PDF
+   ===================================================== */
+
+async function showPdf(base64) {
+
+  if (
+    typeof pdfjsLib ===
+    'undefined'
+  ) {
+
+    showViewerError(
+      'Не вдалося завантажити модуль перегляду PDF.'
+    );
+
+    return;
+  }
+
+
+  const token =
+    ++pdfRenderToken;
+
+
+  try {
+
+    const bytes =
+      base64ToUint8Array(
+        base64
+      );
+
+
+    const loadingTask =
+      pdfjsLib.getDocument({
+        data: bytes
+      });
+
+
+    const documentObject =
+      await loadingTask.promise;
+
+
+    if (
+      token !==
+      pdfRenderToken
+    ) {
+
+      return;
+    }
+
+
+    pdfDocument =
+      documentObject;
+
+
+    pdfPageNumber = 1;
+
+
+    document
+      .getElementById(
+        'viewerLoading'
+      )
+      .style.display =
+        'none';
+
+
+    document
+      .getElementById(
+        'pdfArea'
+      )
+      .style.display =
+        'block';
+
+
+    if (
+      pdfDocument.numPages > 1
+    ) {
+
+      document
+        .getElementById(
+          'pdfControls'
+        )
+        .style.display =
+          'flex';
+    }
+
+
+    updatePdfControls();
+
+
+    await renderPdfPage(
+      pdfPageNumber,
+      token
+    );
+
+  } catch (error) {
+
+    showViewerError(
+      'Не вдалося відобразити PDF. ' +
+      (
+        error.message ||
+        String(error)
+      )
+    );
+  }
+}
+
+
+
+/* =====================================================
+   PDF PAGE
+   ===================================================== */
+
+async function renderPdfPage(
+  pageNumber,
+  token
+) {
+
+  if (
+    !pdfDocument
+  ) {
+
+    return;
+  }
+
+
+  if (
+    pdfRendering
+  ) {
+
+    pdfPendingPage =
+      pageNumber;
+
+    return;
+  }
+
+
+  pdfRendering =
+    true;
+
+
+  try {
+
+    const page =
+      await pdfDocument
+        .getPage(
+          pageNumber
+        );
+
+
+    if (
+      token !==
+      pdfRenderToken
+    ) {
+
+      pdfRendering =
+        false;
+
+      return;
+    }
+
+
+    const canvas =
+      document
+        .getElementById(
+          'pdfCanvas'
+        );
+
+
+    const context =
+      canvas.getContext(
+        '2d'
+      );
+
+
+    const naturalViewport =
+      page.getViewport({
+        scale: 1
+      });
+
+
+    const bodyWidth =
+      document
+        .getElementById(
+          'viewerBody'
+        )
+        .clientWidth;
+
+
+    const maxWidth =
+      Math.max(
+        280,
+        Math.min(
+          bodyWidth - 40,
+          1100
+        )
+      );
+
+
+    const cssScale =
+      Math.min(
+        maxWidth /
+        naturalViewport.width,
+        1.8
+      );
+
+
+    const deviceScale =
+      Math.min(
+        window.devicePixelRatio || 1,
+        2
+      );
+
+
+    const renderScale =
+      cssScale *
+      deviceScale;
+
+
+    const renderViewport =
+      page.getViewport({
+        scale: renderScale
+      });
+
+
+    const cssViewport =
+      page.getViewport({
+        scale: cssScale
+      });
+
+
+    canvas.width =
+      Math.floor(
+        renderViewport.width
+      );
+
+
+    canvas.height =
+      Math.floor(
+        renderViewport.height
+      );
+
+
+    canvas.style.width =
+      Math.floor(
+        cssViewport.width
+      ) + 'px';
+
+
+    canvas.style.height =
+      Math.floor(
+        cssViewport.height
+      ) + 'px';
+
+
+    await page.render({
+
+      canvasContext:
+        context,
+
+      viewport:
+        renderViewport
+
+    }).promise;
+
+
+    if (
+      token !==
+      pdfRenderToken
+    ) {
+
+      pdfRendering =
+        false;
+
+      return;
+    }
+
+
+    pdfPageNumber =
+      pageNumber;
+
+
+    updatePdfControls();
+
+
+    document
+      .getElementById(
+        'viewerBody'
+      )
+      .scrollTop = 0;
+
+  } catch (error) {
+
+    showViewerError(
+      'Не вдалося відобразити сторінку PDF. ' +
+      (
+        error.message ||
+        String(error)
+      )
+    );
+
+  } finally {
+
+    pdfRendering =
+      false;
+
+
+    if (
+      pdfPendingPage !== null
+    ) {
+
+      const pending =
+        pdfPendingPage;
+
+
+      pdfPendingPage =
+        null;
+
+
+      renderPdfPage(
+        pending,
+        token
+      );
+    }
+  }
+}
+
+
+
+/* =====================================================
+   PDF CONTROLS
+   ===================================================== */
+
+function updatePdfControls() {
+
+  const total =
+    pdfDocument
+      ? pdfDocument.numPages
+      : 1;
+
+
+  document
+    .getElementById(
+      'pdfPageInfo'
+    )
+    .textContent =
+      pdfPageNumber +
+      ' / ' +
+      total;
+
+
+  document
+    .getElementById(
+      'pdfPrev'
+    )
+    .disabled =
+      pdfPageNumber <= 1;
+
+
+  document
+    .getElementById(
+      'pdfNext'
+    )
+    .disabled =
+      pdfPageNumber >= total;
+}
+
+
+
+function previousPdfPage() {
+
+  if (
+    !pdfDocument ||
+    pdfPageNumber <= 1
+  ) {
+
+    return;
+  }
+
+
+  renderPdfPage(
+    pdfPageNumber - 1,
+    pdfRenderToken
+  );
+}
+
+
+
+function nextPdfPage() {
+
+  if (
+    !pdfDocument ||
+    pdfPageNumber >=
+      pdfDocument.numPages
+  ) {
+
+    return;
+  }
+
+
+  renderPdfPage(
+    pdfPageNumber + 1,
+    pdfRenderToken
+  );
+}
+
+
+
+/* =====================================================
+   IMAGE
+   ===================================================== */
+
+function showImage(
+  base64,
+  mimeType
+) {
+
+  document
+    .getElementById(
+      'viewerLoading'
+    )
+    .style.display =
+      'none';
+
+
+  const imageArea =
+    document
+      .getElementById(
+        'imageArea'
+      );
+
+
+  const image =
+    document
+      .getElementById(
+        'viewerImage'
+      );
+
+
+  image.src =
+    'data:' +
+    mimeType +
+    ';base64,' +
+    base64;
+
+
+  imageArea.style.display =
+    'flex';
+}
+
+
+
+/* =====================================================
+   UNSUPPORTED
+   ===================================================== */
+
+function showUnsupported(
+  fileName
+) {
+
+  document
+    .getElementById(
+      'viewerLoading'
+    )
+    .style.display =
+      'none';
+
+
+  document
+    .getElementById(
+      'unsupportedBox'
+    )
+    .textContent =
+      'Файл «' +
+      (
+        fileName ||
+        'Документ'
+      ) +
+      '» має формат, який поки не можна показати всередині Travel Desk.';
+
+
+  document
+    .getElementById(
+      'unsupportedArea'
+    )
+    .style.display =
+      'flex';
+}
+
+
+
+/* =====================================================
+   ERROR
+   ===================================================== */
+
+function showViewerError(
+  message
+) {
+
+  document
+    .getElementById(
+      'viewerLoading'
+    )
+    .style.display =
+      'none';
+
+
+  document
+    .getElementById(
+      'pdfControls'
+    )
+    .style.display =
+      'none';
+
+
+  const errorBox =
+    document
+      .getElementById(
+        'viewerError'
+      );
+
+
+  errorBox.textContent =
+    'Не вдалося відкрити документ. ' +
+    message;
+
+
+  errorBox.style.display =
+    'flex';
+}
+
+
+
+/* =====================================================
+   DOCUMENT NAVIGATION
+   ===================================================== */
+
+function updateViewerNavigation() {
+
+  const counter =
+    document
+      .getElementById(
+        'viewerCounter'
+      );
+
+
+  const prev =
+    document
+      .getElementById(
+        'viewerPrev'
+      );
+
+
+  const next =
+    document
+      .getElementById(
+        'viewerNext'
+      );
+
+
+  if (
+    viewerFiles.length > 1
+  ) {
+
+    counter.textContent =
+      'Документ ' +
+      (viewerIndex + 1) +
+      ' з ' +
+      viewerFiles.length;
+
+  } else {
+
+    counter.textContent =
+      '';
+  }
+
+
+  prev.disabled =
+    viewerIndex <= 0;
+
+
+  next.disabled =
+    viewerIndex >=
+    viewerFiles.length - 1;
+
+
+  document
+    .getElementById(
+      'viewerNavigation'
+    )
+    .style.display =
+      viewerFiles.length > 1
+        ? 'flex'
+        : 'none';
+}
+
+
+
+function previousViewerFile() {
+
+  if (
+    viewerIndex <= 0
+  ) {
+
+    return;
+  }
+
+
+  viewerIndex--;
+
+  loadViewerFile();
+}
+
+
+
+function nextViewerFile() {
+
+  if (
+    viewerIndex >=
+    viewerFiles.length - 1
+  ) {
+
+    return;
+  }
+
+
+  viewerIndex++;
+
+  loadViewerFile();
+}
+
+
+
+/* =====================================================
+   CLOSE VIEWER
+   ===================================================== */
+
+function closeViewer() {
+
+  pdfRenderToken++;
+
+
+  pdfDocument = null;
+
+  pdfPageNumber = 1;
+
+  pdfRendering = false;
+
+  pdfPendingPage = null;
+
+
+  document
+    .getElementById(
+      'viewer'
+    )
+    .classList
+    .remove(
+      'open'
+    );
+
+
+  document
+    .body
+    .classList
+    .remove(
+      'viewer-open'
+    );
+
+
+  document
+    .getElementById(
+      'pdfControls'
+    )
+    .style.display =
+      'none';
+
+
+  document
+    .getElementById(
+      'viewerImage'
+    )
+    .removeAttribute(
+      'src'
+    );
+
+
+  viewerFiles = [];
+
+  viewerIndex = 0;
+}
+
+
+
+/* =====================================================
+   BASE64
+   ===================================================== */
+
+function base64ToUint8Array(
+  base64
+) {
+
+  const binary =
+    atob(
+      base64
+    );
+
+
+  const bytes =
+    new Uint8Array(
+      binary.length
+    );
+
+
+  for (
+    let i = 0;
+    i < binary.length;
+    i++
+  ) {
+
+    bytes[i] =
+      binary.charCodeAt(i);
+  }
+
+
+  return bytes;
+}
+
+
+
+/* =====================================================
+   DATES
+   ===================================================== */
+
+function parseDate(value) {
+
+  const v =
+    txt(value);
+
+
+  if (
+    !v
+  ) {
+
+    return null;
+  }
+
+
+  let match =
+    v.match(
+      /^(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{4})/
+    );
+
+
+  if (
+    match
+  ) {
+
+    return new Date(
+      Number(match[3]),
+      Number(match[2]) - 1,
+      Number(match[1])
+    );
+  }
+
+
+  match =
+    v.match(
+      /^(\d{4})-(\d{1,2})-(\d{1,2})/
+    );
+
+
+  if (
+    match
+  ) {
+
+    return new Date(
+      Number(match[1]),
+      Number(match[2]) - 1,
+      Number(match[3])
+    );
+  }
+
+
+  return null;
+}
+
+
+
+function dateKey(date) {
+
+  if (
+    !date
+  ) {
+
+    return '';
+  }
+
+
+  return (
+    date.getFullYear() +
+    '-' +
+
+    String(
+      date.getMonth() + 1
+    ).padStart(
+      2,
+      '0'
+    ) +
+
+    '-' +
+
+    String(
+      date.getDate()
+    ).padStart(
+      2,
+      '0'
+    )
+  );
+}
+
+
+
+function shortDate(date) {
+
+  return (
+    String(
+      date.getDate()
+    ).padStart(
+      2,
+      '0'
+    ) +
+
+    '.' +
+
+    String(
+      date.getMonth() + 1
+    ).padStart(
+      2,
+      '0'
+    )
+  );
+}
+
+
+
+function formatRange(
+  start,
+  end
+) {
+
+  if (
+    !start &&
+    !end
+  ) {
+
+    return '';
+  }
+
+
+  if (
+    start &&
+    !end
+  ) {
+
+    return shortDate(
+      start
+    );
+  }
+
+
+  if (
+    !start &&
+    end
+  ) {
+
+    return shortDate(
+      end
+    );
+  }
+
+
+  if (
+    dateKey(start) ===
+    dateKey(end)
+  ) {
+
+    return shortDate(
+      start
+    );
+  }
+
+
+  if (
+    start.getFullYear() ===
+      end.getFullYear() &&
+
+    start.getMonth() ===
+      end.getMonth()
+  ) {
+
+    return (
+      String(
+        start.getDate()
+      ).padStart(
+        2,
+        '0'
+      ) +
+
+      '–' +
+
+      shortDate(
+        end
+      )
+    );
+  }
+
+
+  return (
+    shortDate(start) +
+    '–' +
+    shortDate(end)
+  );
+}
+
+
+
+/* =====================================================
+   ESCAPE HTML
+   ===================================================== */
+
+function escapeHtml(value) {
+
+  return String(
+    value ?? ''
+  )
+
+    .replace(
+      /&/g,
+      '&amp;'
+    )
+
+    .replace(
+      /</g,
+      '&lt;'
+    )
+
+    .replace(
+      />/g,
+      '&gt;'
+    )
+
+    .replace(
+      /"/g,
+      '&quot;'
+    )
+
+    .replace(
+      /'/g,
+      '&#039;'
+    );
+}
+
+
+
+/* =====================================================
+   FILTERS
+   ===================================================== */
+
+document
+  .querySelectorAll(
+    '.filter'
+  )
+  .forEach(
+    function(button) {
+
+      button
+        .addEventListener(
+          'click',
+          function() {
+
+            document
+              .querySelectorAll(
+                '.filter'
+              )
+              .forEach(
+                function(item) {
+
+                  item
+                    .classList
+                    .remove(
+                      'active'
+                    );
+                }
+              );
+
+
+            button
+              .classList
+              .add(
+                'active'
+              );
+
+
+            currentFilter =
+              button
+                .dataset
+                .filter;
+
+
+            render();
+          }
+        );
+    }
+  );
+
+
+
+/* =====================================================
+   RESIZE PDF
+   ===================================================== */
+
+let resizeTimer = null;
+
+
+window.addEventListener(
+  'resize',
+  function() {
+
+    if (
+      !pdfDocument
+    ) {
+
+      return;
+    }
+
+
+    clearTimeout(
+      resizeTimer
+    );
+
+
+    resizeTimer =
+      setTimeout(
+        function() {
+
+          renderPdfPage(
+            pdfPageNumber,
+            pdfRenderToken
+          );
+
+        },
+        250
+      );
+  }
+);
+
+</script>
+
 </body>
 </html>
