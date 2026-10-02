@@ -1394,7 +1394,7 @@ if (typeof pdfjsLib !== 'undefined') {
    ===================================================== */
 
 const API_URL =
-  'https://script.google.com/macros/s/AKfycbytEs2tay3UuD5LpADN6VOIgbXVX26l8jnz--CB0nIL4q7c6DsYZBJh45CCOXVByMXQ4w/exec';
+  'https://script.google.com/macros/s/AKfycbw2SbmZS40_0ePQ_oEtE-W4e_OICBj1jLyC3ic-eBIxWrhPqbyrBnPG-xpanbiCUf9ytQ/exec';
 
 function jsonp(params) {
   return new Promise(function(resolve, reject) {
@@ -2497,15 +2497,93 @@ function renderHotel(trip) {
 
 function renderTasks(trip) {
 
-  if (
-    !trip.tasks.length
-  ) {
+  const items = [];
 
+
+  trip.rows.forEach(
+    function(row) {
+
+      const possibleItems = [
+
+        {
+          field: 'transportOut',
+          label: '🚘 Транспорт туди',
+          status: row.transportOut
+        },
+
+        {
+          field: 'transportBack',
+          label: '🚘 Транспорт назад',
+          status: row.transportBack
+        },
+
+        {
+          field: 'hotel',
+          label: '🏨 Готель',
+          status: row.hotel
+        },
+
+        {
+          field: 'transfer',
+          label: '➕ Додатково',
+          status: row.transfer
+        },
+
+        {
+          field: 'businessTrip',
+          label: '📄 Оформлення відрядження',
+          status: row.businessTrip
+        }
+
+      ];
+
+
+      possibleItems.forEach(
+        function(item) {
+
+          const status =
+            upper(item.status);
+
+
+          if (
+            status === 'ТРЕБА ЗРОБИТИ' ||
+            status === 'ТЕРМІНОВО' ||
+            status === 'ОЧІКУЄМО'
+          ) {
+
+            const key =
+              item.field +
+              '|' +
+              item.label;
+
+
+            if (
+              !items.some(
+                existing =>
+                  existing.key === key
+              )
+            ) {
+
+              items.push({
+                key: key,
+                field: item.field,
+                label: item.label,
+                status: status
+              });
+            }
+          }
+        }
+      );
+    }
+  );
+
+
+  if (!items.length) {
     return '';
   }
 
 
-  let html = `
+  return `
 
     <div class="warning">
 
@@ -2513,45 +2591,215 @@ function renderTasks(trip) {
         ⚠️ Треба зробити:
       </div>
 
+
       ${
-        trip.tasks
+        items
           .map(
-            escapeHtml
+            function(item) {
+
+              return `
+
+                <div
+                  style="
+                    margin-top: 14px;
+                    padding-top: 14px;
+                    border-top: 1px solid rgba(101,75,0,.18);
+                  "
+                >
+
+                  <div
+                    style="
+                      font-weight: 700;
+                      margin-bottom: 10px;
+                    "
+                  >
+                    ${escapeHtml(item.label)}
+                  </div>
+
+
+                  <div
+                    style="
+                      display: flex;
+                      flex-wrap: wrap;
+                      gap: 8px;
+                    "
+                  >
+
+                    <button
+                      type="button"
+                      class="btn"
+                      onclick="updateTaskStatus(
+                        '${escapeHtml(trip.tripId)}',
+                        '${escapeHtml(item.field)}',
+                        'ГОТОВО',
+                        this
+                      )"
+                    >
+                      ✓ Готово
+                    </button>
+
+
+                    <button
+                      type="button"
+                      class="btn"
+                      onclick="updateTaskStatus(
+                        '${escapeHtml(trip.tripId)}',
+                        '${escapeHtml(item.field)}',
+                        'НЕ ПОТРІБНО',
+                        this
+                      )"
+                    >
+                      — Не потрібно
+                    </button>
+
+                  </div>
+
+                </div>
+              `;
+            }
           )
-          .join('<br>')
+          .join('')
       }
+
+
+      ${
+        trip.deadlines.length
+
+          ? `
+            <div class="deadline">
+
+              Дедлайн:
+
+              ${
+                trip.deadlines
+                  .map(escapeHtml)
+                  .join(' · ')
+              }
+
+            </div>
+          `
+
+          : ''
+      }
+
+    </div>
   `;
+}
+function updateTaskStatus(
+  tripId,
+  field,
+  status,
+  button
+) {
 
-
-  if (
-    trip.deadlines.length
-  ) {
-
-    html += `
-
-      <div class="deadline">
-
-        Дедлайн:
-
-        ${
-          trip.deadlines
-            .map(
-              escapeHtml
-            )
-            .join(' · ')
-        }
-
-      </div>
-    `;
+  if (!tripId || !field) {
+    alert('Не вдалося визначити завдання.');
+    return;
   }
 
 
-  html +=
-    '</div>';
+  let details = '';
 
 
-  return html;
+  /*
+    Якщо натиснули "Готово" —
+    просимо вказати, що саме зроблено.
+  */
+
+  if (status === 'ГОТОВО') {
+
+    const questions = {
+
+      transportOut:
+        'Вкажи деталі транспорту ТУДИ:\n\nНаприклад:\nРейс KL1322 · Краків → Амстердам · 12.10 · 06:30–08:30',
+
+      transportBack:
+        'Вкажи деталі транспорту НАЗАД:\n\nНаприклад:\nРейс KL1331 · Амстердам → Краків · 15.10 · 20:35–22:30',
+
+      hotel:
+        'Вкажи деталі готелю:\n\nНаприклад:\nHilton Madrid Airport\n22–27.10.2026\nАдреса...\nБронювання №...',
+
+      transfer:
+        'Вкажи деталі:\n\nНаприклад:\nКиїв → аеропорт Краків\n11.10 · 06:00\nБронювання №...',
+
+      businessTrip:
+        'За потреби вкажи деталі оформлення відрядження.\n\nЯкщо додаткових деталей немає — можеш залишити поле порожнім.'
+
+    };
+
+
+    const result =
+      prompt(
+        questions[field] ||
+        'Вкажи деталі:'
+      );
+
+
+    /*
+      "Скасувати" = нічого не змінюємо.
+    */
+
+    if (result === null) {
+      return;
+    }
+
+
+    details =
+      String(result || '').trim();
+  }
+
+
+  const originalText =
+    button.textContent;
+
+
+  const taskBlock =
+    button.parentElement;
+
+
+  const buttons =
+    taskBlock
+      ? taskBlock.querySelectorAll('button')
+      : [button];
+
+
+  buttons.forEach(
+    function(btn) {
+      btn.disabled = true;
+    }
+  );
+
+
+  button.textContent =
+    'Зберігаю…';
+
+
+  jsonp({
+    api: 'update',
+    tripId: tripId,
+    field: field,
+    status: status,
+    details: details
+  })
+    .then(function(data) {
+      trips = buildTrips(data.trips || [], data.routes || []);
+      sortTrips();
+      render();
+    })
+    .catch(function(error) {
+      buttons.forEach(function(btn) {
+        btn.disabled = false;
+      });
+
+      button.textContent = originalText;
+
+      alert(
+        'Не вдалося зберегти: ' +
+        (error && error.message ? error.message : String(error))
+      );
+    });
 }
+
 
 
 
