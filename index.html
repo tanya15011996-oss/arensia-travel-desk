@@ -1898,6 +1898,19 @@ function createTrip(
           .filter(
             validUrl
           )
+      ),
+
+
+    insuranceFiles:
+      unique(
+        rows
+          .map(
+            row =>
+              row.insuranceFile
+          )
+          .filter(
+            validUrl
+          )
       )
 
   };
@@ -2265,7 +2278,7 @@ function renderCard(trip) {
 
           ? `
             <div class="ready">
-              ✓ Відрядження підготовлено
+              ✓ Все готово
             </div>
           `
 
@@ -2552,28 +2565,6 @@ function renderButtons(trip) {
 
 
   if (
-    trip.folders.length
-  ) {
-
-    html += `
-
-      <a
-        class="btn"
-        href="${
-          escapeHtml(
-            trip.folders[0]
-          )
-        }"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        📁 Всі файли
-      </a>
-    `;
-  }
-
-
-  if (
     trip.ticketFiles.length
   ) {
 
@@ -2617,6 +2608,18 @@ function renderButtons(trip) {
       viewerButton(
         trip.tripFiles,
         '📄 Документи'
+      );
+  }
+
+
+  if (
+    trip.insuranceFiles.length
+  ) {
+
+    html +=
+      viewerButton(
+        trip.insuranceFiles,
+        '🛡️ Страховий поліс'
       );
   }
 
